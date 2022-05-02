@@ -1,9 +1,9 @@
 PipePair = Class{}
 
-local GAP_HEIGHT = 90
+local GAP_HEIGHT = 70
 
 function PipePair:init(y)
-	self.x = VIRTUAL_WIDTH + 32
+	self.x = VIRTUAL_WIDTH
 
 	self.y = y
 
@@ -11,6 +11,7 @@ function PipePair:init(y)
 		['upper'] = Pipe('top', self.y), 
 		['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + GAP_HEIGHT)
 	}
+	--31 and 47
 
 	self.remove = false
 end
