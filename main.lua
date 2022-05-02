@@ -8,6 +8,8 @@ require "Bird"
 
 require "Pipe"
 
+require "PipePair"
+
 --constants
 WINDOW_WIDTH = 1366
 WINDOW_HEIGHT = 768
@@ -33,9 +35,14 @@ math.randomseed(os.time())
 --making a bird object from the bird class
 local bird = Bird()
 
-local pipes = {}
+--table of pipe pairs
+local pipePairs = {}
 
+--timer for when pipe spawns
 local timer = 0
+
+--sotrs the last y of the pipe gap so that the sucessive pipe isin't spawned too far from it making the game much more dificult
+local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
 --is called when the game loads
 function love.load()
@@ -50,6 +57,7 @@ function love.load()
 		resizable = false
 	})
 
+	--creates a table of keys pressed
 	love.keyboard.keysPressed = {}
 end 
 
@@ -83,20 +91,31 @@ function love.update(dt)
 	groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
 	% VIRTUAL_WIDTH
 
+	--increments the timer by dt which I think is a small fraction of a second
 	timer = timer + dt
 
 	if timer > 2 then
-		table.insert(pipes, Pipe())
+
+		local y = math.max(-PIPE_HEIGHT + 47, 
+			math.min(lastY + math.random(-40, 40), VIRTUAL_HEIGHT - 121 -PIPE_HEIGHT))
+		lastY = y
+
+		--spawns a pipe then resets the timer to 0 so that another pipe can be spawned
+		table.insert(pipePairs, PipePair(y))
 		timer = 0
 	end
 
 	bird:update(dt)
 	
-	for k, pipe in pairs (pipes) do
- 		pipe:update(dt)
+	--updating the pipes so they scroll on screen
+	for k, pair in pairs (pipePairs) do
+ 		pair:update(dt)
+	end
 
- 		if pipe.x < - pipe.width then
- 			table.remove(pipes, k)
+	--removing the pipes when they cross the left bound of the screen
+	for k, pair in pairs (pipePairs) do
+ 		if pair.remove then
+ 			table.remove(pipePairs, k)
  		end
 	end
 
@@ -109,8 +128,9 @@ function love.draw()
 	--draws background and ground, they move because the x values are variables
 	love.graphics.draw(background, -backgroundScroll, 0)
 
-	for k, pipe in pairs(pipes) do
-		pipe:render()
+	--renders the pipes onto the screen
+	for k, pair in pairs(pipePairs) do
+		pair:render()
 	end
 
 	love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
