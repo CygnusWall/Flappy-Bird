@@ -2,7 +2,7 @@ Bird = Class{}
 
 --constants
 local GRAVITY = 13
-local JUMP_FORCE = -5
+local JUMP_FORCE = -250
 
 --is called when an object is created
 function Bird:init()
@@ -26,8 +26,9 @@ function Bird:update(dt)
 	--increments gravity by itself every frame(scaled by delta time)
 	self.dy = self.dy + GRAVITY * dt
 
+	--space is passed as a parameter because we want the bird to jump when space is pressed
 	if love.keyboard.wasPressed('space') then
-		self.dy = self.dy + JUMP_FORCE
+		self.dy = self.dy + JUMP_FORCE * dt
 	end
 
 	--increments the y pos of the bird every frame
