@@ -1,7 +1,8 @@
 Bird = Class{}
 
 --constants
-local GRAVITY = 10
+local GRAVITY = 13
+local JUMP_FORCE = -5
 
 --is called when an object is created
 function Bird:init()
@@ -25,7 +26,12 @@ function Bird:update(dt)
 	--increments gravity by itself every frame(scaled by delta time)
 	self.dy = self.dy + GRAVITY * dt
 
+	if love.keyboard.wasPressed('space') then
+		self.dy = self.dy + JUMP_FORCE
+	end
+
 	--increments the y pos of the bird every frame
 	self.y = self.y + self.dy
 end
+
 
