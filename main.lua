@@ -44,6 +44,9 @@ local timer = 0
 --sotrs the last y of the pipe gap so that the sucessive pipe isin't spawned too far from it making the game much more dificult
 local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
+--pauses the game when we collide with a pipe
+local scrolling = true
+
 --is called when the game loads
 function love.load()
 	--disables interpolation giving us a crisp pixel art look
@@ -85,40 +88,50 @@ end
 
 --is called once every frame
 function love.update(dt)
-	backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
-	% BACKGROUND_LOOPING_POINT 
 
-	groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
-	% VIRTUAL_WIDTH
+	if scrolling then
+		backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
+		% BACKGROUND_LOOPING_POINT 
 
-	--increments the timer by dt which I think is a small fraction of a second
-	timer = timer + dt
+		groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
+		% VIRTUAL_WIDTH
 
-	if timer > 2 then
+		--increments the timer by dt which I think is a small fraction of a second
+		timer = timer + dt
 
-		local y = math.max(-PIPE_HEIGHT + 47, 
-			math.min(lastY + math.random(-40, 40), VIRTUAL_HEIGHT - 121 -PIPE_HEIGHT))
-		lastY = y
+		if timer > 2 then
 
-		--spawns a pipe then resets the timer to 0 so that another pipe can be spawned
-		table.insert(pipePairs, PipePair(y))
-		timer = 0
+			local y = math.max(-PIPE_HEIGHT + 47, 
+				math.min(lastY + math.random(-40, 40), VIRTUAL_HEIGHT - 121 -PIPE_HEIGHT))
+			lastY = y
+
+			--spawns a pipe then resets the timer to 0 so that another pipe can be spawned
+			table.insert(pipePairs, PipePair(y))
+			timer = 0
+		end
+
+		bird:update(dt)
+		
+		--updating the pipes so they scroll on screen
+		for k, pair in pairs (pipePairs) do
+	 		pair:update(dt)
+
+	 		--check to see if bird collided with the pipe
+	 		for l, pipe in pairs(pair.pipes) do
+	 			if bird:collides(pipe) then
+	 				--pause the game
+	 				scrolling = false
+	 			end
+	 		end
+		end
+
+		--removing the pipes when they cross the left bound of the screen
+		for k, pair in pairs (pipePairs) do
+	 		if pair.remove then
+	 			table.remove(pipePairs, k)
+	 		end
+		end
 	end
-
-	bird:update(dt)
-	
-	--updating the pipes so they scroll on screen
-	for k, pair in pairs (pipePairs) do
- 		pair:update(dt)
-	end
-
-	--removing the pipes when they cross the left bound of the screen
-	for k, pair in pairs (pipePairs) do
- 		if pair.remove then
- 			table.remove(pipePairs, k)
- 		end
-	end
-
 	--clears the last stored key at the end of every frame so that a new one can be accepted
 	love.keyboard.keysPressed = {}
 end
