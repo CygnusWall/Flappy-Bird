@@ -5,10 +5,13 @@ Class = require "class"
 
 --user defined classes
 require "Bird"
-
 require "Pipe"
-
 require "PipePair"
+
+require "StateMachine"
+require "states/BaseState"
+require "states/PlayState"
+require "states/TitleScreenState"
 
 --constants
 WINDOW_WIDTH = 1366
@@ -54,11 +57,24 @@ function love.load()
 
 	love.window.setTitle('Flappy Bird')
 
+	smallFont = love.graphics.newFont('font.ttf', 8)
+	mediumFont = love.graphics.newFont('flappy.ttf', 14)
+	largeFont = love.graphics.newFont('flappy.ttf', 28)
+	hugeFont = love.graphics.newFont('flappy.ttf', 56)
+	love.graphics.setFont(largeFont)
+
 	push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
 		vsync = true,
 		fullscreen = true,
 		resizable = false
 	})
+
+	gStateMachine = StateMachine {
+		['title'] = function() return TitleScreenState() end,
+		['play'] = function() return PlayState() end
+	}
+
+	gStateMachine:change('title')
 
 	--creates a table of keys pressed
 	love.keyboard.keysPressed = {}
@@ -96,42 +112,9 @@ function love.update(dt)
 		groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
 		% VIRTUAL_WIDTH
 
-		--increments the timer by dt which I think is a small fraction of a second
-		timer = timer + dt
-
-		if timer > 2 then
-
-			local y = math.max(-PIPE_HEIGHT + 47, 
-				math.min(lastY + math.random(-40, 40), VIRTUAL_HEIGHT - 121 -PIPE_HEIGHT))
-			lastY = y
-
-			--spawns a pipe then resets the timer to 0 so that another pipe can be spawned
-			table.insert(pipePairs, PipePair(y))
-			timer = 0
-		end
-
-		bird:update(dt)
-		
-		--updating the pipes so they scroll on screen
-		for k, pair in pairs (pipePairs) do
-	 		pair:update(dt)
-
-	 		--check to see if bird collided with the pipe
-	 		for l, pipe in pairs(pair.pipes) do
-	 			if bird:collides(pipe) then
-	 				--pause the game
-	 				scrolling = false
-	 			end
-	 		end
-		end
-
-		--removing the pipes when they cross the left bound of the screen
-		for k, pair in pairs (pipePairs) do
-	 		if pair.remove then
-	 			table.remove(pipePairs, k)
-	 		end
-		end
-	end
+		--update the state machine
+		gStateMachine:update(dt)
+	end	
 	--clears the last stored key at the end of every frame so that a new one can be accepted
 	love.keyboard.keysPressed = {}
 end
@@ -141,15 +124,20 @@ function love.draw()
 	--draws background and ground, they move because the x values are variables
 	love.graphics.draw(background, -backgroundScroll, 0)
 
+	--[[
 	--renders the pipes onto the screen
 	for k, pair in pairs(pipePairs) do
 		pair:render()
 	end
+	--]]
 
+	gStateMachine:render()
+	
 	love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
 
 	--user defined function for drawing the bird, see the class for more info
-	bird:render()
+	--bird:render()
 
 	push:finish()
+
 end
