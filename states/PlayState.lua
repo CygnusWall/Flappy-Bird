@@ -52,6 +52,7 @@ function PlayState:update(dt)
             for l, pipe in pairs(pair.pipes) do
                 if self.bird:collides(pipe) then
                     gStateMachine:change('score')
+
                 end
             end
         end
@@ -59,6 +60,7 @@ function PlayState:update(dt)
         --reset if bird hits the ground
         if self.bird.y > VIRTUAL_HEIGHT - 15 then
             gStateMachine:change('score')
+            
         end
 
         --check to see when bird passes a pipe
@@ -81,5 +83,8 @@ function PlayState:render()
     end
 
     self.bird:render()
+
+    love.graphics.setFont(largeFont)
+    love.graphics.printf(gScore / 2, 20, 20, VIRTUAL_WIDTH, 'left')
 end
     
