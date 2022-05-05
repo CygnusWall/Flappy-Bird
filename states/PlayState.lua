@@ -9,6 +9,8 @@ PIPE_WIDTH = 70
 BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
 
+gScore = 0
+
 function PlayState:init()
     self.bird = Bird()
     self.pipePairs = {}
@@ -49,14 +51,27 @@ function PlayState:update(dt)
             --check to see if bird collided with the pipe
             for l, pipe in pairs(pair.pipes) do
                 if self.bird:collides(pipe) then
-                    gStateMachine:change('title')
+                    gStateMachine:change('score')
                 end
             end
         end
 
         --reset if bird hits the ground
         if self.bird.y > VIRTUAL_HEIGHT - 15 then
-            gStateMachine:change('title')
+            gStateMachine:change('score')
+        end
+
+        --check to see when bird passes a pipe
+        for k, pair in pairs(self.pipePairs) do
+            for l, pipe in pairs(pair.pipes) do
+                if self.bird:passes(pipe) then
+
+                    gScore = gScore + 1
+
+
+                end
+
+            end
         end
 end
 
