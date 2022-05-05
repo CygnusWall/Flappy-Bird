@@ -10,6 +10,7 @@ function ScoreState:update(dt)
 	self.score = gScore
 
 	if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+		gScore = 0
 		gStateMachine:change('title')
 	end
 end
