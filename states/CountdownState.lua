@@ -3,7 +3,7 @@ CountdownState = Class{__includes = BaseState}
 COUNTDOWN_TIME = 0.75
 
 function CountdownState:init()
-	self.count = 5
+	self.count = 1
 	self.timer = 0
 end
 
