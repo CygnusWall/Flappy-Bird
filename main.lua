@@ -13,6 +13,7 @@ require "states/BaseState"
 require "states/PlayState"
 require "states/TitleScreenState"
 require "states/CountdownState"
+require "states/ScoreState"
 
 --constants
 WINDOW_WIDTH = 1366
