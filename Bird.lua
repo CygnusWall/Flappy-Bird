@@ -13,6 +13,7 @@ function Bird:init()
 	--sets the x and y positions to the center of the screen
 	self.x = VIRTUAL_WIDTH / 2 - (self.width / 2)
 	self.y = VIRTUAL_HEIGHT / 2 - (self.height / 2)
+	self.xpos = VIRTUAL_WIDTH / 2
 
 	self.dy = 0
 end
@@ -45,4 +46,12 @@ function Bird:collides(pipe)
 	end
 end 
 
+function Bird:passes(pipe)
+	if tostring(self.x) > tostring(pipe.x) then
+		if self.x < pipe.x + 1 then
+			return true
+		end
+			--return true
+	end
 
+end
