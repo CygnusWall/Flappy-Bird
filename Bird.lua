@@ -47,8 +47,8 @@ function Bird:collides(pipe)
 end 
 
 function Bird:passes(pipe)
-	if tostring(self.x) > tostring(pipe.x) then
-		if self.x < pipe.x + 1 then
+	if self.x + (self.width / 2) > pipe.x + PIPE_WIDTH then
+		if self.x + (self.width / 2) < pipe.x + PIPE_WIDTH + 1 then
 			return true
 		end
 			--return true
