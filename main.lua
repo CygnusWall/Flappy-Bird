@@ -65,6 +65,17 @@ function love.load()
 	hugeFont = love.graphics.newFont('flappy.ttf', 56)
 	love.graphics.setFont(largeFont)
 
+	sounds = {
+		['jump'] = love.audio.newSource('Jump.wav', 'static'),
+		['score'] = love.audio.newSource('Score.wav', 'static'),
+		['hurt'] = love.audio.newSource('Hurt.wav', 'static'),
+
+		['music'] = love.audio.newSource('gamemusic.mp3', 'static')
+	}
+
+	sounds['music']:setLooping(true)
+	sounds['music']:play()
+
 	push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
 		vsync = true,
 		fullscreen = true,
@@ -128,19 +139,9 @@ function love.draw()
 	--draws background and ground, they move because the x values are variables
 	love.graphics.draw(background, -backgroundScroll, 0)
 
-	--[[
-	--renders the pipes onto the screen
-	for k, pair in pairs(pipePairs) do
-		pair:render()
-	end
-	--]]
-
 	gStateMachine:render()
 	
 	love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
-
-	--user defined function for drawing the bird, see the class for more info
-	--bird:render()
 
 	push:finish()
 

@@ -16,7 +16,7 @@ function Pipe:init(orientation, y)
 
 	self.orientation = orientation
 end
-
+ 
 function Pipe:update(dt)
 	self.x = self.x + PIPE_SCROLL * dt
 end

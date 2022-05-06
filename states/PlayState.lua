@@ -10,6 +10,7 @@ BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
 
 gScore = 0
+gTest = 0
 
 function PlayState:init()
     self.bird = Bird()
@@ -21,6 +22,7 @@ end
 
 function PlayState:update(dt)
     self.timer = self.timer + dt
+    gTest = gTest + dt
 
         if self.timer > 2 then
 
@@ -52,7 +54,6 @@ function PlayState:update(dt)
             for l, pipe in pairs(pair.pipes) do
                 if self.bird:collides(pipe) then
                     gStateMachine:change('score')
-
                 end
             end
         end
@@ -60,17 +61,14 @@ function PlayState:update(dt)
         --reset if bird hits the ground
         if self.bird.y > VIRTUAL_HEIGHT - 15 then
             gStateMachine:change('score')
-            
         end
 
         --check to see when bird passes a pipe
         for k, pair in pairs(self.pipePairs) do
             for l, pipe in pairs(pair.pipes) do
                 if self.bird:passes(pipe) then
-
                     gScore = gScore + 1
-
-
+                    
                 end
 
             end
@@ -85,6 +83,8 @@ function PlayState:render()
     self.bird:render()
 
     love.graphics.setFont(largeFont)
+    --gScore is divided by two because it actually triggers for two frames giving us double the value we need
     love.graphics.printf(gScore / 2, 20, 20, VIRTUAL_WIDTH, 'left')
+    --love.graphics.printf(tostring(gTest), 20, 50, VIRTUAL_WIDTH, 'left')
 end
     

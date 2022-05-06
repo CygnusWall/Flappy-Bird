@@ -2,14 +2,14 @@ ScoreState = Class{__includes = BaseState}
 
 function ScoreState:init()
 	self.score = 0
-	self.bird = Bird()
-    self.pipePairs = {}
 end
 
 function ScoreState:update(dt)
+	--this line is probably redundant as we could just print gScore instead
 	self.score = gScore
 
 	if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+		--resets score so the player cannot cheat
 		gScore = 0
 		gStateMachine:change('title')
 	end

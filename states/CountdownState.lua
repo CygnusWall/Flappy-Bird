@@ -1,8 +1,10 @@
 CountdownState = Class{__includes = BaseState}
 
+--one second seemed tiresome so .75 does the trick
 COUNTDOWN_TIME = 0.75
 
 function CountdownState:init()
+	--how much seconds we want to count down for
 	self.count = 1
 	self.timer = 0
 end
